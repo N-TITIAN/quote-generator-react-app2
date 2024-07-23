@@ -5,46 +5,39 @@ import { useState } from "react";
 import { useEffect } from "react";
 
 //array definition
-const quotes = [
-  {
-    quote: "The best way to predict the future is to create it.",
-    author: "Abraham Lincoln",
-  },
-  {
-    quote: "life is a spoon",
-    author: " Ndifon",
-  },
-  {
-    quote: "give up",
-    author: "Titiana",
-  },
-  {
-    quote: "pray pray",
-    author: "Abraham ",
-  },
-];
+
 
 function App() {
   const [quote, setQuote] = useState("");
   const [author, setAuthor] = useState("");
 
   //function to select random quotes
-  const selectRandomQuote = () => {
-    const randomIndex = Math.floor(Math.random() * quotes.length);
-    return quotes[randomIndex];
+  const selectRandomQuote = (data) => {
+    const randomIndex = Math.floor(Math.random() * data.length);
+    return data[randomIndex];
   };
-  const fetchNewQuote = () => {
-    const randomQuote = selectRandomQuote();
-    setQuote(randomQuote.quote);
-    setAuthor(randomQuote.author);
+ 
+
+
+  const fetchNewQuote = async () => {
+    try {
+      const response = await fetch("https://type.fit/api/quotes");
+      const data = await response.json();
+      console.log(data);
+       const randomQuote = selectRandomQuote(data);
+      setQuote(randomQuote.text);
+      setAuthor(randomQuote.author);
+
+    } catch (error) {
+      console.error("Error fetching quote:", error);
+      
+    }
   };
-  useEffect(
-    () => {
-      fetchNewQuote();
-    },
-    // eslint-disable-next-line
-    []
-  );
+
+  useEffect(() => {
+    fetchNewQuote(); // Fetch a quote on component mount
+  }, // eslint-disable-next-line
+  []); // Empty dependency array for fetching only on mount
 
   return (
     <div className="App">
